@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "lib"
+		},
+		{
+			"path": "example"
+		},
+		{
+			"path": "keys"
+		},
+		{
+			"path": "test"
+		}
+	],
+	"settings": {}
+}
