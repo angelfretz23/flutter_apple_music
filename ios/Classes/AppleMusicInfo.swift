@@ -3,7 +3,7 @@ import StoreKit
 
 public class AppleMusicInfo: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: PLUGIN_PATH + "/methods", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(name: PLUGIN_PATH + "/musicInfo", binaryMessenger: registrar.messenger())
     let instance = AppleMusicInfo()
     registrar.addMethodCallDelegate(instance, channel: channel)
     }

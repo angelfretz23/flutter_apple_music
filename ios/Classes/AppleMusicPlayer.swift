@@ -9,19 +9,39 @@ import Flutter
 import MediaPlayer
 
 public class AppleMusicPlayer: NSObject, FlutterPlugin {
+    
     var player: MPMusicPlayerController!
     
-    static let instance = AppleMusicPlayer()
+    // MARK: StreamHandlers
+    weak var playerStateChangedEvent: StreamHandler?
+    weak var nowPlayingItemChangedEvent: StreamHandler?
     
     public override init() {
         super.init()
         player = MPMusicPlayerController.applicationMusicPlayer
+        setupNotifications()
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: PLUGIN_PATH + "/musicplayer", binaryMessenger: registrar.messenger())
-        let instance = AppleMusicPlayer.instance
+        let instance = AppleMusicPlayer()
+        
         registrar.addMethodCallDelegate(instance, channel: channel)
+        
+        registerEvents(with: registrar, instance: instance)
+    }
+    
+    private static func registerEvents(with registrar: FlutterPluginRegistrar, instance: AppleMusicPlayer) {
+        let playerStateChangedEventStreamHandler = StreamHandler()
+        let nowPlayingItemChangedEventStreamHandler = StreamHandler()
+        instance.playerStateChangedEvent = playerStateChangedEventStreamHandler
+        instance.nowPlayingItemChangedEvent = nowPlayingItemChangedEventStreamHandler
+        
+        let playbackStateChangedEventChannel = FlutterEventChannel(name: AppleMusicPlayerEvents.playbackStateChangedEvent, binaryMessenger: registrar.messenger())
+        playbackStateChangedEventChannel.setStreamHandler(playerStateChangedEventStreamHandler)
+        
+        let nowPlayingItemChangedEventChannel = FlutterEventChannel(name: AppleMusicPlayerEvents.nowPlayingItemChangedEvent, binaryMessenger: registrar.messenger())
+        nowPlayingItemChangedEventChannel.setStreamHandler(nowPlayingItemChangedEventStreamHandler)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -54,4 +74,50 @@ public class AppleMusicPlayer: NSObject, FlutterPlugin {
         }
         
     }
+    
+    deinit {
+        cleanUp()
+    }
 }
+
+// MARK: - Stream Handlers
+extension AppleMusicPlayer {
+    
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange), name: .MPMusicPlayerControllerPlaybackStateDidChange, object: player)
+        NotificationCenter.default.addObserver(self, selector: #selector(nowPlayingItemDidChange), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: player)
+//        NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange), name: .MPMusicPlayerControllerQueueDidChange, object: player)
+//        NotificationCenter.default.addObserver(self, selector: #selector(playbackStateDidChange), name: .MPMusicPlayerControllerVolumeDidChange, object: player)
+        player.beginGeneratingPlaybackNotifications()
+    }
+    
+    private func removeNotifications() {
+        NotificationCenter.default.removeObserver(self)
+        player.endGeneratingPlaybackNotifications()
+    }
+    
+    private func cleanUp() {
+        playerStateChangedEvent = nil
+        nowPlayingItemChangedEvent = nil
+    }
+    
+    @objc private func playbackStateDidChange() {
+        let state = player.playbackState.rawValue
+        playerStateChangedEvent?.send(message: state)
+    }
+    
+    @objc private func nowPlayingItemDidChange() {
+        guard let nowPlayingItem = MediaItem(withPlayer: player) else { return }
+        
+        let encoder = JSONEncoder()
+        
+        do {
+            let mediaItemData = try encoder.encode(nowPlayingItem)
+            let mediaItemStringData = String(data: mediaItemData, encoding: .utf8)
+            nowPlayingItemChangedEvent?.send(message: mediaItemStringData)
+        } catch {
+            print(error)
+        }
+    }
+}
+

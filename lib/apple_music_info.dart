@@ -13,19 +13,19 @@ class AppleMusicInfo {
 
   Future<String?> get storefrontCountryCode async {
     final storefrontCountryCode =
-        await _methodChannel.invokeMethod(Methods.storefrontCountryCode);
+        await _methodChannel.invokeMethod(_Methods.storefrontCountryCode);
     return storefrontCountryCode;
   }
 
   Future<String?> get storefrontIdentifier async {
     final storefrontId =
-        await _methodChannel.invokeMethod(Methods.storefrontIdentifier);
+        await _methodChannel.invokeMethod(_Methods.storefrontIdentifier);
     return storefrontId;
   }
 
   Future<AuthorizationStatus> get authorizationStatus async {
     try {
-      int value = await _methodChannel.invokeMethod(Methods.permissions);
+      int value = await _methodChannel.invokeMethod(_Methods.permissions);
       AuthorizationStatus status = AuthorizationStatus.notDetermined;
       status = AuthorizationStatus.values[value];
       return Future.value(status);
@@ -53,7 +53,7 @@ class AppleMusicInfo {
   Future<String?> userToken(String developerToken) async {
     try {
       final userToken = await _methodChannel
-          .invokeMethod(Methods.userToken, <String, dynamic>{
+          .invokeMethod(_Methods.userToken, <String, dynamic>{
         'developerToken': developerToken,
       });
       return userToken;

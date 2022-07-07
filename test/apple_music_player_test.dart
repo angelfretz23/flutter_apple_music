@@ -23,13 +23,12 @@ void main() {
     });
 
     test('Play method is called', () async {
-      when(() => methodChannel.invokeMethod(Methods.play, any()))
+      when(() => methodChannel.invokeMethod("play", any()))
           .thenAnswer((_) => Future.value(Void));
 
       final queueConfig = QueueConfiguration([songId]);
       await appleMusicPlayer.play(queueConfig);
-      verify(() =>
-              methodChannel.invokeMethod(Methods.play, queueConfig.toJson()))
+      verify(() => methodChannel.invokeMethod("play", queueConfig.toJson()))
           .called(1);
     });
   });

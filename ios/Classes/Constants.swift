@@ -6,4 +6,5 @@
 //
 
 let PLUGIN_PATH = "works.theway/flutter_apple_music"
+let EVENT_PATH = "\(PLUGIN_PATH)/events"
 

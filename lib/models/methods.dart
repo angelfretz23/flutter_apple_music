@@ -1,6 +1,6 @@
 part of flutter_apple_music;
 
-class Methods {
+class _Methods {
   // Apple Music Info
   static const permissions = "permissions";
   static const storefrontCountryCode = "storefront/countrycode";

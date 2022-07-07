@@ -10,6 +10,31 @@ class AppleMusicPlayer {
   AppleMusicPlayer(this._methodChannel);
 
   Future<void> play(QueueConfiguration data) async {
-    _methodChannel.invokeMethod(Methods.play, data.toJson());
+    _methodChannel.invokeMethod(_Methods.play, data.toJson());
+  }
+
+  // Events
+  late final EventChannel _playbackStateChangedEventChannel =
+      const EventChannel(_AppleMusicPlayerEvents.playbackStateChangedEvent);
+  late final EventChannel _nowPlayingMediaItemChangedEventChannel =
+      const EventChannel(_AppleMusicPlayerEvents.nowPlayingItemChangedEvent);
+
+  // Streams Listeners
+  Stream<PlaybackState> get playbackStateChanged {
+    return _playbackStateChangedEventChannel
+        .receiveBroadcastStream()
+        .map((event) {
+      final intRepresentation = event as int;
+      return PlaybackState.values[intRepresentation];
+    });
+  }
+
+  Stream<MediaItem> get nowPlayingMediaItemChanged {
+    return _nowPlayingMediaItemChangedEventChannel
+        .receiveBroadcastStream()
+        .map((data) {
+      MediaItem mediaItem = MediaItem.fromJson(data);
+      return mediaItem;
+    });
   }
 }
