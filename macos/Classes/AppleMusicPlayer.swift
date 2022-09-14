@@ -5,9 +5,8 @@
 //  Created by Angel Contreras on 6/6/22.
 //
 
-import Flutter
+import FlutterMacOS
 import MediaPlayer
-import MusicKit
 
 public class AppleMusicPlayer: NSObject, FlutterPlugin {
     
@@ -50,9 +49,7 @@ public class AppleMusicPlayer: NSObject, FlutterPlugin {
         case Methods.setQueue:
             setQueue(data: call.arguments, result: result)
         case Methods.play:
-            play(result: result)
-        case Methods.prepareToPlay:
-            prepareToPlay(result: result)
+            play()
         default:
             return
         }
@@ -71,35 +68,21 @@ public class AppleMusicPlayer: NSObject, FlutterPlugin {
             if queueConfig.overwrite {
                 player.stop()
                 player.setQueue(with: queueConfig.storeIds)
-                
+                player.play()
             } else {
                 let queueDescriptor = MPMusicPlayerStoreQueueDescriptor(storeIDs: queueConfig.storeIds)
                 player.append(queueDescriptor)
+                
             }
-            result(true)
         } catch {
-            result(FlutterError(code: "Failed to set queue.", message: error.localizedDescription, details: nil))
+            print(error)
         }
         
     }
     
-    private func prepareToPlay(result: @escaping FlutterResult) {
-        player.prepareToPlay { error in
-            if (error != nil) {
-                let flutterError = FAMError.playerNotReady
-                result(flutterError.toFlutterError(error?.localizedDescription))
-                return
-            }
-            
-            result(true)
-        }
+    private func play() {
+//        player.play()
     }
-    
-    private func play(result: @escaping FlutterResult) {
-        player.play()
-        result(true)
-    }
-    
     
     deinit {
         cleanUp()

@@ -1,11 +1,11 @@
 part of flutter_apple_music;
 
 class QueueConfiguration {
-  List<String> songIds;
+  List<String> storeIds;
   bool overwrite;
 
   QueueConfiguration(
-    this.songIds, {
+    this.storeIds, {
     this.overwrite = false,
   });
 
@@ -14,22 +14,22 @@ class QueueConfiguration {
     bool? overwrite,
   }) {
     return QueueConfiguration(
-      songIds ?? this.songIds,
+      songIds ?? this.storeIds,
       overwrite: overwrite ?? this.overwrite,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'songIds': songIds,
-      'replace': overwrite,
+      'storeIds': storeIds,
+      'overwrite': overwrite,
     };
   }
 
   factory QueueConfiguration.fromMap(Map<String, dynamic> map) {
     return QueueConfiguration(
-      List<String>.from(map['songIds']),
-      overwrite: map['replace'] ?? false,
+      List<String>.from(map['storeIds']),
+      overwrite: map['overwrite'] ?? false,
     );
   }
 
@@ -39,17 +39,18 @@ class QueueConfiguration {
   //     QueueConfiguration.fromMap(json.decode(source));
 
   @override
-  String toString() => 'QueueConfiguration(songIds: $songIds, replace: $overwrite)';
+  String toString() =>
+      'QueueConfiguration(storeIds: $storeIds, overwrite: $overwrite)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is QueueConfiguration &&
-        listEquals(other.songIds, songIds) &&
+        listEquals(other.storeIds, storeIds) &&
         other.overwrite == overwrite;
   }
 
   @override
-  int get hashCode => songIds.hashCode ^ overwrite.hashCode;
+  int get hashCode => storeIds.hashCode ^ overwrite.hashCode;
 }

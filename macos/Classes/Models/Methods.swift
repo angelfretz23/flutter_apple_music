@@ -13,5 +13,4 @@ struct Methods {
     
     static let setQueue = "setQueue"
     static let play = "play"
-    static let prepareToPlay = "prepareToPlay"
 }

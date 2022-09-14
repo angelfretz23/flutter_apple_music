@@ -11,7 +11,6 @@ struct FAMError: Error {
     
     static let unsupportedMethod = FAMError(code: "10001", message: "Method Provided is not supported")
     static let badData = FAMError(code: "10002", message: "The arguments received could not be used to execute the method")
-    static let playerNotReady = FAMError(code: "10003", message: "Player Not Ready.")
     
     var toFlutterError: (Any?) -> FlutterError {
         return { details in

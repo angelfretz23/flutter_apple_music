@@ -13,4 +13,5 @@ class _Methods {
   static const next = "next";
   static const previous = "previous";
   static const setQueue = "setQueue";
+  static const prepareToPlay = "prepareToPlay";
 }

@@ -98,9 +98,17 @@ class _MyAppState extends State<MyApp> {
                 ? "Dev Token Is Valid"
                 : "Dev Token is NOT valid"),
             ElevatedButton(
-              onPressed: () {
-                AppleMusicPlayer.instance
-                    .play(QueueConfiguration(['204672782']));
+              onPressed: () async {
+                await AppleMusicPlayer.instance.setQueue(
+                    QueueConfiguration(['107636085'], overwrite: true));
+                try {
+                  final ready = await AppleMusicPlayer.instance.prepareToPlay();
+                  if (ready) {
+                    await AppleMusicPlayer.instance.play();
+                  }
+                } catch (e) {
+                  print(e);
+                }
               },
               child: const Text('Play'),
             ),

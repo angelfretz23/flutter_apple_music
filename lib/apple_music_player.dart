@@ -9,8 +9,20 @@ class AppleMusicPlayer {
 
   AppleMusicPlayer(this._methodChannel);
 
-  Future<void> play(QueueConfiguration data) async {
-    _methodChannel.invokeMethod(_Methods.play, data.toJson());
+  Future<bool> prepareToPlay() async {
+    final ready =
+        await _methodChannel.invokeMethod(_Methods.prepareToPlay) as bool? ??
+            false;
+    return ready;
+  }
+
+  Future<void> play() async {
+    await _methodChannel.invokeMethod(_Methods.play);
+  }
+
+  Future<bool> setQueue(QueueConfiguration data) async {
+    return (await _methodChannel.invokeMethod(
+        _Methods.setQueue, data.toJson()));
   }
 
   // Events

@@ -10,7 +10,7 @@ void main() {
 
     test('Instantiates with correct values', () {
       final queueConfig = QueueConfiguration(songIds, overwrite: true);
-      expect(queueConfig.songIds, songIds);
+      expect(queueConfig.storeIds, songIds);
       expect(queueConfig.overwrite, isTrue);
     });
     test('copyWith returns a copy', () {
@@ -21,7 +21,7 @@ void main() {
     test('Instantiates from map', () {
       final queueConfig = QueueConfiguration.fromMap(map);
 
-      expect(queueConfig.songIds, songIds);
+      expect(queueConfig.storeIds, songIds);
       expect(queueConfig.overwrite, isFalse);
     });
     test('toString()', () {
